@@ -1,7 +1,11 @@
-import { IsOptional, IsString, IsDateString } from 'class-validator';
+import { IsOptional, IsString, IsDateString, IsEmail } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateLoopEmailDto {
+  @ApiPropertyOptional({ example: 'hello@gmail.com', description: 'email' })
+  @IsEmail()
+  email: string;
+
   @ApiPropertyOptional({ example: '2023-10-31T00:00:00.000Z', description: 'Tanggal email' })
   @IsOptional()
   @IsDateString()

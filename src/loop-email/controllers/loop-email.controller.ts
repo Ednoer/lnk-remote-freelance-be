@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Req, Query, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Req, Query, BadRequestException, Request } from '@nestjs/common';
 import { LoopEmailService } from '../services/loop-email.service';
 import { CreateLoopEmailDto } from '../models/dto/create-loop-email.dto';
 import { UpdateLoopEmailDto } from '../models/dto/update-loop-email.dto';
@@ -21,8 +21,9 @@ export class LoopEmailController {
   @ApiOperation({ summary: 'Create a new loop email' })
   @ApiResponse({ status: 201, description: 'The loop email has been successfully created.' })
   @ApiBearerAuth('JWT')
-  async create(@Body() createLoopEmailDto: CreateLoopEmailDto) {
-    return this.loopEmailService.create(createLoopEmailDto);
+  async create(@Body() createLoopEmailDto: CreateLoopEmailDto, @Request() req) {
+    const { email } = req.user;
+    return this.loopEmailService.create(createLoopEmailDto, email);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -37,7 +38,10 @@ export class LoopEmailController {
       throw new BadRequestException('Invalid month format. Use YYYY-MM.');
     }
 
-    return this.loopEmailService.findAll(month);
+    const result = await this.loopEmailService.findAll(month)
+    return {
+      data: result
+    };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -45,7 +49,10 @@ export class LoopEmailController {
   @ApiOperation({ summary: 'Get a loop email by id' })
   @ApiResponse({ status: 200, description: 'Return a loop email.', type: LoopEmail })
   async findOne(@Param('id') id: string) {
-    return this.loopEmailService.findOne(id);
+    const result = await this.loopEmailService.findOne(id);
+    return {
+      data: result
+    };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -53,8 +60,9 @@ export class LoopEmailController {
   @ApiOperation({ summary: 'Update a loop email by id' })
   @ApiResponse({ status: 200, description: 'The loop email has been successfully updated.' })
   @ApiBearerAuth('JWT')
-  async update(@Param('id') id: string, @Body() updateLoopEmailDto: UpdateLoopEmailDto) {
-    return this.loopEmailService.update(id, updateLoopEmailDto);
+  async update(@Param('id') id: string, @Body() updateLoopEmailDto: UpdateLoopEmailDto, @Request() req) {
+    const { email } = req.user;
+    return this.loopEmailService.update(id, updateLoopEmailDto, email);
   }
 
   @UseGuards(JwtAuthGuard)

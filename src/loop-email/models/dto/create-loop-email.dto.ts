@@ -1,7 +1,11 @@
-import { IsNotEmpty, IsString, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsString, IsDateString, IsEmail, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateLoopEmailDto {
+  @ApiProperty({ example: 'hello@gmail.com', description: 'email' })
+  @IsEmail()
+  email: string;
+
   @ApiProperty({ example: '2023-10-30T00:00:00.000Z', description: 'Tanggal email' })
   @IsNotEmpty()
   @IsDateString()
@@ -13,7 +17,7 @@ export class CreateLoopEmailDto {
   description: string;
 
   @ApiProperty({ example: 'user123', description: 'Pengguna yang membuat data' })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  created_by: string;
+  created_by?: string;
 }

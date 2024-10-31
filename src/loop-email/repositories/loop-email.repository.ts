@@ -9,8 +9,9 @@ import { UpdateLoopEmailDto } from '../models/dto/update-loop-email.dto';
 export class LoopEmailRepository {
   constructor(@InjectModel(LoopEmail.name) private loopEmailModel: Model<LoopEmail>) {}
 
-  async create(createLoopEmailDto: CreateLoopEmailDto): Promise<LoopEmail> {
+  async create(createLoopEmailDto: CreateLoopEmailDto, email: string): Promise<LoopEmail> {
     const createdLoopEmail = new this.loopEmailModel(createLoopEmailDto);
+    createLoopEmailDto.created_by = email
     return createdLoopEmail.save();
   }
 
@@ -31,7 +32,8 @@ export class LoopEmailRepository {
     return this.loopEmailModel.findById(id).exec();
   }
 
-  async update(id: string, updateLoopEmailDto: UpdateLoopEmailDto): Promise<LoopEmail | null> {
+  async update(id: string, updateLoopEmailDto: UpdateLoopEmailDto, email: string): Promise<LoopEmail | null> {
+    updateLoopEmailDto.updated_by = email;
     return this.loopEmailModel.findByIdAndUpdate(id, updateLoopEmailDto, { new: true }).exec();
   }
 

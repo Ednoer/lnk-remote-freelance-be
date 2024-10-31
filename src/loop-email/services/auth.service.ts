@@ -10,7 +10,7 @@ export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(createUserDto: CreateUserDto) {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
@@ -34,7 +34,11 @@ export class AuthService {
     await this.userRepository.updateById(user.id, user);
 
     await this.userRepository.recordActivity(user.email, 'User logged in');
-    return { token };
+    return {
+      data: {
+        token
+      }
+    };
   }
 
   async logout(email: string) {
@@ -44,6 +48,6 @@ export class AuthService {
     await this.userRepository.updateById(user.id, user);
 
     await this.userRepository.recordActivity(email, 'User logged out');
-    return ;
+    return;
   }
 }
